@@ -1,6 +1,5 @@
 --[[
-    fivem-strict-rp :: server/supply.lua
-    سلسلة التوريد: منجم → حداد → ميكانيكي (مع تصنيع المحركات).
+    fivem-strict-rp :: server/supply.lua — إضافة دالة منح عنصر (تُستخدم بنظام التجميع)
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -78,6 +77,15 @@ local function removeItem(Player, item, qty)
         persistItem(cid, item)
     end
 end
+
+-- منح عنصر (يُستدعى من نظام التجميع)
+RegisterNetEvent('srp:supply:giveItem', function(item, qty)
+    local src = source
+    local Player = getPlayer(src)
+    if not Player then return end
+    addItem(Player, item, tonumber(qty) or 1)
+    logAction(Player.PlayerData.citizenid, 'assemble', item, qty or 1, 0)
+end)
 
 RegisterNetEvent('srp:supply:mine', function(oreKey)
     local src = source
