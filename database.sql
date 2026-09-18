@@ -1,0 +1,27 @@
+-- fivem-strict-rp :: database.sql
+
+CREATE TABLE IF NOT EXISTS `srp_penalty_points` (
+    `citizenid` VARCHAR(50) NOT NULL PRIMARY KEY,
+    `points` INT NOT NULL DEFAULT 0,
+    `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `srp_criminal_records` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `citizenid` VARCHAR(50) NOT NULL,
+    `offense` VARCHAR(64) NOT NULL,
+    `label` VARCHAR(128) NOT NULL,
+    `points` INT NOT NULL,
+    `fine` INT NOT NULL,
+    `jail` INT NOT NULL,
+    `officer` VARCHAR(50) DEFAULT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_cid` (`citizenid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `srp_wanted` (
+    `citizenid` VARCHAR(50) NOT NULL PRIMARY KEY,
+    `level` INT NOT NULL DEFAULT 1,
+    `offenses` TEXT DEFAULT NULL,
+    `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

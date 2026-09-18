@@ -1,0 +1,21 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+body { background: transparent; overflow: hidden; width: 100vw; height: 100vh; }
+.hidden { display: none !important; }
+
+#jail {
+    position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+    background: rgba(10, 10, 14, 0.82); border: 2px solid #c0392b; border-radius: 14px;
+    padding: 18px 42px; text-align: center; color: #fff;
+    box-shadow: 0 0 30px rgba(192, 57, 43, 0.5); animation: pulse 2s infinite;
+}
+
+.jail-title { font-size: 15px; letter-spacing: 2px; color: #e74c3c; margin-bottom: 6px; }
+.jail-timer { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 3px; text-shadow: 0 0 12px rgba(231, 76, 60, 0.8); }
+.jail-reason { font-size: 13px; color: #bbb; margin-top: 8px; }
+
+@keyframes pulse {
+    0%   { box-shadow: 0 0 18px rgba(192, 57, 43, 0.35); }
+    50%  { box-shadow: 0 0 34px rgba(192, 57, 43, 0.75); }
+    100% { box-shadow: 0 0 18px rgba(192, 57, 43, 0.35); }
+}
