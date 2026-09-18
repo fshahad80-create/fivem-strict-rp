@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة + المزارع v1.7 الكاملة.'
-version '2.6.0'
+description 'نظام سيرفر RP مشدد — كل الأنظمة + المحاماة والمحكمة.'
+version '2.8.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -29,6 +29,8 @@ shared_scripts {
     'config/hunting.lua',
     'config/livestock.lua',
     'config/farm2.lua',
+    'config/carpenter.lua',
+    'config/legal.lua',
 }
 
 client_scripts {
@@ -52,6 +54,8 @@ client_scripts {
     'client/hunting.lua',
     'client/livestock.lua',
     'client/farm2.lua',
+    'client/carpenter.lua',
+    'client/legal.lua',
     'client/tablet.lua',
 }
 
@@ -80,6 +84,8 @@ server_scripts {
     'server/hunting.lua',
     'server/livestock.lua',
     'server/farm2.lua',
+    'server/carpenter.lua',
+    'server/legal.lua',
 }
 
 ui_page 'html/index.html'
