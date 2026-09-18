@@ -1,15 +1,29 @@
 --[[
     fivem-strict-rp :: client/penalties.lua
-    واجهة العقوبات للعميل: السجن + المطلوبون + الإشعارات.
+    جهة العميل لنظام العقوبات: السجن + المطلوبون + الإشعارات.
+    • إحداثيات مركز التوقيف ونقطة الإفراج تُقرأ من Penalties.Jail (config).
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
+
+-- إحداثيات قابلة للتعديل من config (مع قيمة افتراضية آمنة)
+local JAIL   = (Penalties and Penalties.Jail) or {}
+local jailCoords = vector3(
+    JAIL.coords and JAIL.coords.x or 1651.0,
+    JAIL.coords and JAIL.coords.y or 2571.0,
+    JAIL.coords and JAIL.coords.z or 45.5)
+local releaseCoords = vector3(
+    JAIL.release and JAIL.release.x or 425.1,
+    JAIL.release and JAIL.release.y or -979.5,
+    JAIL.release and JAIL.release.z or 30.7)
+local escapeRadius = JAIL.escapeRadius or 35.0
+local escapePenaltyMinutes = JAIL.escapePenaltyMinutes or 1
+
 local isJailed = false
 local jailUntil = 0
 local jailReason = ''
-local jailCoords = vector3(1651.0, 2571.0, 45.5)
-local wantedActive = false
 
+-- ── السجن ────────────────────────────────────────────────────
 local function startJail(minutes, reason)
     isJailed = true
     jailReason = reason or 'حكم قضائي'
@@ -28,7 +42,7 @@ local function endJail()
     isJailed = false
     jailUntil = 0
     local ped = PlayerPedId()
-    SetEntityCoords(ped, 425.1, -979.5, 30.7, false, false, false, true)
+    SetEntityCoords(ped, releaseCoords.x, releaseCoords.y, releaseCoords.z, false, false, false, true)
     DoScreenFadeIn(600)
     SendNUIMessage({ action = 'jailEnd' })
     TriggerEvent('chat:addMessage', { args = { '[المحكمة]', 'تم الإفراج عنك. غادر المنطقة.' } })
@@ -44,10 +58,10 @@ CreateThread(function()
             Wait(0)
             local ped = PlayerPedId()
             local coords = GetEntityCoords(ped)
-            if #(coords - jailCoords) > 35.0 then
+            if #(coords - jailCoords) > escapeRadius then
                 SetEntityCoords(ped, jailCoords.x, jailCoords.y, jailCoords.z, false, false, false, true)
                 TriggerEvent('chat:addMessage', { args = { '[المحكمة]', 'محاولة هروب! العقوبة تُمدد.' } })
-                jailUntil = jailUntil + 60
+                jailUntil = jailUntil + (escapePenaltyMinutes * 60)
             end
             local remaining = jailUntil - os.time()
             if remaining <= 0 then
@@ -67,13 +81,14 @@ end)
 
 RegisterNetEvent('srp:penalties:wanted', function(citizenid, level)
     if QBCore.Functions.GetPlayerData().citizenid == citizenid then
-        wantedActive = true
         TriggerEvent('chat:addMessage', { args = { '[الشرطة]', ('أنت مطلوب! مستوى %s — سلّم نفسك.'):format(level) } })
     end
 end)
 
 RegisterNetEvent('srp:penalties:wantedClear', function(citizenid)
-    if QBCore.Functions.GetPlayerData().citizenid == citizenid then wantedActive = false end
+    if QBCore.Functions.GetPlayerData().citizenid == citizenid then
+        TriggerEvent('chat:addMessage', { args = { '[الشرطة]', 'لم تعد مطلوباً.' } })
+    end
 end)
 
 RegisterNetEvent('srp:penalties:locate', function(citizenid, coords)

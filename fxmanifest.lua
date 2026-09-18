@@ -5,7 +5,7 @@ lua54 'yes'
 name 'fivem-strict-rp'
 author 'UseAI Instant'
 description 'نظام سيرفر RP مشدد — عقوبات، اقتصاد، احتياجات، قوانين.'
-version '1.0.0'
+version '1.1.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',

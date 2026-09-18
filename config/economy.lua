@@ -1,7 +1,6 @@
 --[[
     fivem-strict-rp :: config/economy.lua
     نظام الاقتصاد الواقعي — الإعدادات الكاملة.
-    الرواتب / الضرائب / التضخم / الفواتير / التأمين.
 ]]
 
 Economy = {}
@@ -51,7 +50,7 @@ Economy.Taxes = {
         enabled = true,
         graceHours = 24,
         penaltyPercent = 25,
-        offenseKey = "reckless_driving",
+        offenseKey = "bill_default",
         maxEscalationPerDay = 3,
     },
 }
@@ -90,6 +89,7 @@ Economy.Insurance = {
         maxPayoutPerClaim = 20000,
     },
     revokeLicenseOnDefault = true,
+    defaultOffenseKey = "insurance_fraud",
 }
 
 Economy.Limits = {
