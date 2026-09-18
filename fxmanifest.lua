@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة + تطبيقات الجوال (أبشر · ناجز · مدى · مزادي · أطلبني).'
-version '3.0.0'
+description 'نظام سيرفر RP مشدد — كل الأنظمة + تشليح المركبات.'
+version '3.1.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -33,6 +33,7 @@ shared_scripts {
     'config/legal.lua',
     'config/stalls.lua',
     'config/phone.lua',
+    'config/scrapyard.lua',
 }
 
 client_scripts {
@@ -60,6 +61,7 @@ client_scripts {
     'client/legal.lua',
     'client/stalls.lua',
     'client/phone.lua',
+    'client/scrapyard.lua',
     'client/tablet.lua',
 }
 
@@ -92,6 +94,7 @@ server_scripts {
     'server/legal.lua',
     'server/stalls.lua',
     'server/phone.lua',
+    'server/scrapyard.lua',
 }
 
 ui_page 'html/index.html'
