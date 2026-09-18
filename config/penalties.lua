@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/penalties.lua
-    نظام العقوبات التلقائية — إعدادات كاملة قابلة للتعديل.
+    نظام العقوبات التلقائية + إحداثيات السجن — إعدادات كاملة.
 ]]
 
 Penalties = {}
@@ -83,6 +83,15 @@ Penalties.Wanted = {
     cooldownSeconds  = 600,
     broadcastInterval = 20,
     autoSentenceOnArrest = true,
+}
+
+-- ── 6.b إحداثيات السجن (قابلة للتعديل) ───────────────────────
+-- تُقرأ في client/penalties.lua. عدّلها حسب خريطة سيرفرك.
+Penalties.Jail = {
+    coords          = { x = 1651.0, y = 2571.0, z = 45.5 },
+    release         = { x = 425.1,  y = -979.5, z = 30.7 },
+    escapeRadius    = 35.0,
+    escapePenaltyMinutes = 1,
 }
 
 Penalties.Records = {

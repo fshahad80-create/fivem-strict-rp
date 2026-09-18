@@ -196,10 +196,11 @@ local function chargeInsurance()
     for _, src in ipairs(QBCore.Functions.GetPlayers()) do
         local Player = getPlayer(src)
         if Player then
-            if Player.Functions.GetMoney('bank') >= E.Insurance.premiumBase then
-                Player.Functions.RemoveMoney('bank', E.Insurance.premiumBase, 'srp-insurance')
+            local premium = E.Insurance.premiumBase
+            if Player.Functions.GetMoney('bank') >= premium then
+                Player.Functions.RemoveMoney('bank', premium, 'srp-insurance')
             elseif E.Insurance.revokeLicenseOnDefault then
-                TriggerEvent('srp:penalties:report', 'reckless_driving', { officer = 'شركة التأمين' })
+                TriggerEvent('srp:penalties:report', E.Insurance.defaultOffenseKey, { officer = 'شركة التأمين' })
             end
         end
     end
