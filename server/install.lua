@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: server/install.lua
-    نظام التركيب والتجميع — QBCore.
+    نظام التركيب والتجميع — مع دعم قطع التشليح (registerSalvagedPart / removeFromVehicle).
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -8,7 +8,11 @@ local I = Install
 local S = Supply
 
 local Fitted = {}
+local Perf   = {}
+-- [citizenid] = { [itemKey] = quality } — القطع المُشلَّحة (من نظام التشليح)
+local Salvaged = {}
 
+local T_FITTED = 'srp_vehicle_parts'
 local function log(msg) print(('[fivem-strict-rp][install] %s'):format(msg)) end
 local function getPlayer(src) return QBCore.Functions.GetPlayer(src) end
 
@@ -48,7 +52,6 @@ local function isQbItem(item)
     if S.Settings.inventoryMode == 'qbcore' then return true end
     return QBCore.Shared.Items[item] ~= nil
 end
-
 local function getQty(Player, item)
     if isQbItem(item) then
         local it = Player.Functions.GetItemByName(item)
@@ -56,7 +59,6 @@ local function getQty(Player, item)
     end
     return 0
 end
-
 local function removeItem(Player, item, qty)
     if isQbItem(item) then Player.Functions.RemoveItem(item, qty) end
 end
@@ -101,6 +103,25 @@ RegisterNetEvent('srp:install:remove', function(category, plate)
     removePersist(plate, category)
     TriggerClientEvent('srp:install:applyEffect', src, plate, eff, false)
     TriggerClientEvent('QBCore:Notify', src, ('تم إزالة %s.'):format(eff and eff.label or category), 'success')
+end)
+
+-- ── تسجيل قطعة مُشلَّحة (يستدعيها نظام التشليح) ──────────────
+RegisterNetEvent('srp:install:registerSalvagedPart', function(citizenid, item, quality)
+    if not citizenid or not item then return end
+    Salvaged[citizenid] = Salvaged[citizenid] or {}
+    Salvaged[citizenid][item] = quality or 3
+end)
+
+-- ── إزالة قطعة من سيارة (يستدعيها نظام التشليح) ────────────
+RegisterNetEvent('srp:install:removeFromVehicle', function(src, plate, category)
+    if not src or not plate or not category then return end
+    Fitted[plate] = Fitted[plate] or {}
+    local itemKey = Fitted[plate][category]
+    if not itemKey then return end
+    local eff = I.Effects[itemKey]
+    Fitted[plate][category] = nil
+    removePersist(plate, category)
+    TriggerClientEvent('srp:install:applyEffect', src, plate, eff, false)
 end)
 
 RegisterNetEvent('srp:install:assemble', function(recipeKey)

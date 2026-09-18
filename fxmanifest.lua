@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة + تشليح المركبات.'
-version '3.1.0'
+description 'نظام سيرفر RP مشدد — كل الأنظمة + تشليح المركبات المرتبط بالتركيب.'
+version '3.2.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',

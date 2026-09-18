@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: server/scrapyard.lua
-    تشليح المركبات — تفكيك · جودة · مستوى · بيع.
+    تشليح المركبات — تفكيك · فلتر ملكية · جودة · ربط بنظام التركيب · إزالة قطع.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -62,7 +62,8 @@ local function qualityFromVehicle(engineHealth, bodyHealth)
 end
 local QualityMult = { [1] = 0.6, [2] = 0.8, [3] = 1.0, [4] = 1.3, [5] = 1.6 }
 
-RegisterNetEvent('srp:scrapyard:dismantle', function(netId, engineHealth, bodyHealth)
+-- ── التشليح (مع فلتر الملكية) ────────────────────────────────
+RegisterNetEvent('srp:scrapyard:dismantle', function(netId, plate, engineHealth, bodyHealth)
     local src = source
     local Player = getPlayer(src)
     if not Player then return end
@@ -70,6 +71,23 @@ RegisterNetEvent('srp:scrapyard:dismantle', function(netId, engineHealth, bodyHe
     if Cooldown[src] and (os.time() - Cooldown[src]) < 10 then
         TriggerClientEvent('QBCore:Notify', src, Sc.Messages.cooldown, 'error') return
     end
+    if Sc.Settings.blockOwnedVehicles and plate and plate ~= '' then
+        MySQL.query('SELECT citizenid FROM player_vehicles WHERE plate = ?', { plate }, function(rows)
+            local r = rows and rows[1]
+            if r and r.citizenid ~= cid then
+                TriggerClientEvent('QBCore:Notify', src, Sc.Messages.ownedBlocked, 'error') return
+            end
+            if r then MySQL.query('DELETE FROM player_vehicles WHERE plate = ?', { plate }) end
+            proceedDismantle(src, Player, netId, engineHealth, bodyHealth)
+        end)
+        return
+    end
+    Cooldown[src] = os.time()
+    proceedDismantle(src, Player, netId, engineHealth, bodyHealth)
+end)
+
+function proceedDismantle(src, Player, netId, engineHealth, bodyHealth)
+    local cid = Player.PlayerData.citizenid
     Cooldown[src] = os.time()
     Workers[cid] = Workers[cid] or { level = 1, xp = 0, dismantled = 0, earned = 0 }
     local worker = Workers[cid]
@@ -88,6 +106,8 @@ RegisterNetEvent('srp:scrapyard:dismantle', function(netId, engineHealth, bodyHe
             giveItem(src, item, qty)
             gained = gained + 1
             totalValue = totalValue + (def.value * qty)
+            -- ربط بنظام التركيب: سجّل القطعة كقابلة للتركيب
+            TriggerEvent('srp:install:registerSalvagedPart', cid, item, quality)
         end
     end
     local refund = math.floor(totalValue * Sc.Settings.valueRefundPercent / 100)
@@ -104,6 +124,21 @@ RegisterNetEvent('srp:scrapyard:dismantle', function(netId, engineHealth, bodyHe
     TriggerClientEvent('QBCore:Notify', src, ('فُكّكت المركبة — %s قطعة (جودة %s★)'):format(gained, quality), 'success')
     local veh = NetworkGetEntityFromNetworkId(netId)
     if veh ~= 0 and DoesEntityExist(veh) then DeleteEntity(veh) end
+end
+
+-- ── إزالة قطعة من سيارة ⇒ مخزونك (ربط بنظام التركيب) ────────
+RegisterNetEvent('srp:scrapyard:extractPart', function(netId, plate, partKey)
+    local src = source
+    local Player = getPlayer(src)
+    if not Player then return end
+    if not partKey then return end
+    local eff = Install and Install.Effects and Install.Effects[partKey]
+    if not eff then
+        TriggerClientEvent('QBCore:Notify', src, 'قطعة غير معروفة.', 'error') return
+    end
+    TriggerEvent('srp:install:removeFromVehicle', src, plate, eff.category)
+    giveItem(src, partKey, 1)
+    TriggerClientEvent('QBCore:Notify', src, ('استخرجت %s من المركبة'):format(eff.label), 'success')
 end)
 
 RegisterNetEvent('srp:scrapyard:sell', function(itemKey, qty)
