@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الفرسان RP | AL-FORSAN RP</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="bg-layer"></div>
+    <div class="bg-overlay"></div>
+
+    <div class="loader-wrap">
+        <div class="logo-box">
+            <img src="logo.jpg" alt="الفرسان RP" class="logo" />
+            <div class="logo-glow"></div>
+        </div>
+
+        <h1 class="server-name">الفرسان <span>RP</span></h1>
+        <p class="server-sub">AL-FORSAN RP</p>
+        <p class="server-tag">حيث الشرف والمجد · Where Honor &amp; Glory</p>
+
+        <div class="rules-box">
+            <h2 class="rules-title">⚔️ قوانين المدينة</h2>
+            <div class="rules-grid">
+                <div class="rule"><span class="rule-num">01</span><p>احترم جميع اللاعبين — لا إهانة ولا تمييز. العقوبة: إنذار ثم سجن ثم حظر.</p></div>
+                <div class="rule"><span class="rule-num">02</span><p>التزم بالشخصية (RP) — ممنوع كسر الأداء (FailRP) أو استخدام معلومة خارج الشخصية.</p></div>
+                <div class="rule"><span class="rule-num">03</span><p>ممنوع القتل العشوائي (RDM/VDM) أو الهروب أثناء المواجهة (Combat Log).</p></div>
+                <div class="rule"><span class="rule-num">04</span><p>احترم دور الشرطة والأمن العام — لا استفزاز ولا مقاومة غير مبررة.</p></div>
+                <div class="rule"><span class="rule-num">05</span><p>ممنوع استغلال الثغرات أو التعديل على العميل — حظر دائم فوري.</p></div>
+                <div class="rule"><span class="rule-num">06</span><p>الاقتصاد واقعي: سدّد فواتيرك، بدّل زيت سيارتك، والتزم بالضرائب.</p></div>
+                <div class="rule"><span class="rule-num">07</span><p>ممنوع استخدام الصوت المزعج أو الأغاني غير اللائقة في المايك.</p></div>
+                <div class="rule"><span class="rule-num">08</span><p>ساهم بالأداء الواقعي — العائلة · الوظيفة · الأعمال · التجارة. الشرف فوق كل شيء.</p></div>
+            </div>
+            <p class="rules-foot">باقي القوانين التفصيلية داخل السيرفر — اكتب <b>/help</b> أو افتح <b>F3</b></p>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-info">
+                <span id="statusText">جاري تحميل مدينة الفرسان...</span>
+                <span id="progressPct">0%</span>
+            </div>
+        </div>
+
+        <p class="tip" id="tipText">اسأل المساعد الذكي بـ /ask في أي وقت</p>
+
+        <div class="links">
+            <a class="link-btn" id="discordLink">💬 ديسكورد</a>
+            <a class="link-btn" id="rulesLink">📜 القوانين الكاملة</a>
+        </div>
+    </div>
+
+    <script>
+        window.SERVER_NAME = "الفرسان RP";
+        window.DISCORD_URL = "https://discord.gg/forsan";
+        window.RULES_URL   = "";
+
+        const tips = [
+            "اسأل المساعد الذكي بـ /ask في أي وقت",
+            "اكتب /jobs لترى وظائفك المتاحة",
+            "شجرة المسارات: اكتب /paths وطوّر تخصصك",
+            "لا تنسَ تغيير زيت سيارتك عند الميكانيكي",
+            "التوريد من المنجم للحداد أرباحه أعلى",
+            "تابلت الخدمات بالضغط على F3",
+        ];
+        let pct = 0;
+        const fill = document.getElementById('progressFill');
+        const txt  = document.getElementById('progressPct');
+        const stat = document.getElementById('statusText');
+        const tipEl = document.getElementById('tipText');
+        let tipIdx = 0;
+
+        window.setProgress = function(value, status) {
+            pct = Math.max(0, Math.min(100, value));
+            fill.style.width = pct + '%';
+            txt.textContent = Math.floor(pct) + '%';
+            if (status) stat.textContent = status;
+        };
+        window.getProgress = function() { return pct; };
+
+        setInterval(() => {
+            if (pct >= 100) return;
+            setProgress(pct + Math.random() * 3 + 0.5, "جاري تجهيز " + window.SERVER_NAME + "...");
+        }, 400);
+
+        setInterval(() => {
+            tipIdx = (tipIdx + 1) % tips.length;
+            tipEl.style.opacity = 0;
+            setTimeout(() => { tipEl.textContent = tips[tipIdx]; tipEl.style.opacity = 1; }, 300);
+        }, 6000);
+
+        document.getElementById('discordLink').href = window.DISCORD_URL;
+        document.getElementById('rulesLink').onclick = () => {
+            if (window.RULES_URL) window.open(window.RULES_URL, '_blank');
+            else alert("القوانين الكاملة متوفرة في ديسكورد السيرفر");
+        };
+
+        // أحداث FiveM الحقيقية للدخول右键
+        window.addEventListener('message', function(e) {
+            const d = e.data || {};
+            if (d.eventName === 'loadProgress') window.setProgress(d.loadFraction * 100);
+        });
+    </script>
+</body>
+</html>
