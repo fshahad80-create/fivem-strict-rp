@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/supply.lua
-    سلسلة التوريد: منجم → حداد → ميكانيكي (مع تصنيع المحركات).
+    سلسلة التوريد: منجم → حداد → ميكانيكي (محركات + قطع داخلية + كام/تيربو/تظليل).
 ]]
 
 Supply = {}
@@ -53,7 +53,7 @@ Supply.MechanicRequirements = {
     tires       = { label = "تغيير إطارات", parts = { tire = 4 },                     basePrice = 600 },
 }
 
--- تصنيع الميكانيكي (محركات · قير · دهان · قطع استهلاكية)
+-- تصنيع الميكانيكي
 Supply.MechanicCrafted = {
     engine_v6   = { label = "محرك V6",   icon = "🔧", baseValue = 4500,  weight = 40, category = "engine", tier = 1 },
     engine_v8   = { label = "محرك V8",   icon = "🔧", baseValue = 8000,  weight = 50, category = "engine", tier = 2 },
@@ -72,6 +72,12 @@ Supply.MechanicCrafted = {
     engine_oil  = { label = "زيت محرك",   icon = "🛢️", baseValue = 400, weight = 6, category = "consumable" },
     coolant     = { label = "سائل تبريد", icon = "🧴", baseValue = 260, weight = 4, category = "consumable" },
     brake_fluid = { label = "سائل فرامل", icon = "🧴", baseValue = 300, weight = 4, category = "consumable" },
+    camshaft     = { label = "كامة (Cam)", icon = "🌀", baseValue = 5200,  weight = 20, category = "internals", tier = 3 },
+    crankshaft   = { label = "عمود كرنك",  icon = "🔩", baseValue = 6500,  weight = 30, category = "internals", tier = 3 },
+    piston       = { label = "بستم",       icon = "🛞", baseValue = 3800,  weight = 18, category = "internals", tier = 2 },
+    engine_block = { label = "بلوك محرك",  icon = "🧱", baseValue = 9000,  weight = 70, category = "internals", tier = 3 },
+    turbocharger = { label = "تيربو",      icon = "💨", baseValue = 14000, weight = 25, category = "internals", tier = 4 },
+    tint_kit     = { label = "طقم تظليل",  icon = "🌑", baseValue = 2800,  weight = 8,  category = "style",     tier = 1 },
 }
 
 Supply.MechanicRecipes = {
@@ -109,6 +115,18 @@ Supply.MechanicRecipes = {
         inputs = { copper_ore = 1, coal = 3 }, output = "coolant", outputQty = 2 },
     brake_fluid = { label = "تحضير سائل فرامل", icon = "🧴", workshop = true, tier = 1, time = 10,
         inputs = { copper_ore = 2, coal = 2 }, output = "brake_fluid", outputQty = 2 },
+    camshaft     = { label = "تجميع كامة (Cam)", icon = "🌀", workshop = true, tier = 3, time = 55,
+        inputs = { iron_ore = 12, aluminum = 5, copper_ore = 4, steel_plate = 4 }, tools = { welder_tool = 1 }, output = "camshaft", outputQty = 1 },
+    crankshaft   = { label = "تجميع عمود كرنك",  icon = "🔩", workshop = true, tier = 3, time = 70,
+        inputs = { iron_ore = 18, aluminum = 6, steel_plate = 6, metal_beam = 3 }, tools = { welder_tool = 2 }, output = "crankshaft", outputQty = 1 },
+    piston       = { label = "تجميع بستم",        icon = "🛞", workshop = true, tier = 2, time = 35,
+        inputs = { iron_ore = 8, aluminum = 4, steel_plate = 2 }, tools = { welder_tool = 1 }, output = "piston", outputQty = 2 },
+    engine_block = { label = "سبك بلوك محرك",    icon = "🧱", workshop = true, tier = 3, time = 80,
+        inputs = { iron_ore = 24, aluminum = 10, steel_plate = 8, metal_beam = 6 }, tools = { welder_tool = 2 }, output = "engine_block", outputQty = 1 },
+    turbocharger = { label = "تجميع تيربو",       icon = "💨", workshop = true, tier = 4, time = 110,
+        inputs = { iron_ore = 20, aluminum = 12, copper_ore = 10, steel_plate = 10 }, tools = { welder_tool = 2 }, output = "turbocharger", outputQty = 1 },
+    tint_kit     = { label = "تجهيز طقم تظليل",   icon = "🌑", workshop = true, tier = 1, time = 15,
+        inputs = { copper_ore = 2, coal = 1 }, output = "tint_kit", outputQty = 1 },
 }
 
 Supply.Locations = {
