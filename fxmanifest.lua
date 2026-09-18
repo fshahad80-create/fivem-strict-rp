@@ -5,11 +5,12 @@ lua54 'yes'
 name 'fivem-strict-rp'
 author 'UseAI Instant'
 description 'نظام سيرفر RP مشدد — عقوبات تلقائية، اقتصاد واقعي، احتياجات، قوانين.'
-version '0.1.0'
+version '0.2.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
     'config/penalties.lua',
+    'config/economy.lua',
 }
 
 client_scripts {
@@ -19,6 +20,7 @@ client_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/penalties.lua',
+    'server/economy.lua',
 }
 
 ui_page 'html/index.html'
