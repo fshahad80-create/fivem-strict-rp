@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: client/dealerships.lua
-    جهة العميل للمعارض: نقاط التفاعل + الشراء/الاستبدال.
+    جهة العميل للمعارض: نقاط التفاعل + واجهة الشراء الرسومية.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -47,11 +47,46 @@ CreateThread(function()
 end)
 
 RegisterNetEvent('srp:dealership:showStock', function(dealerKey, list)
-    if #list == 0 then notify('لا يوجد مخزون متاح.', 'inform') return end
-    notify(('معرض %s — %s مركبة متاحة'):format(D.List[dealerKey].label, #list), 'primary')
-    for _, v in ipairs(list) do
-        notify(('%s : $%s — استخدم /buycar %s'):format(v.label, v.price, v.model), 'inform')
+    if #list == 0 then
+        notify('لا يوجد مخزون متاح.', 'inform')
+        return
     end
+    local items = {}
+    for _, v in ipairs(list) do
+        items[#items+1] = {
+            id = v.model,
+            title = v.label,
+            sub = 'موديل: ' .. v.model,
+            price = v.price,
+        }
+    end
+    SendNUIMessage({
+        action = 'openModal',
+        title = 'معرض ' .. (D.List[dealerKey] and D.List[dealerKey].label or ''),
+        items = items,
+        foot = 'اختر مركبة (السعر قبل الضريبة)',
+        callback = 'buycar:' .. dealerKey,
+    })
+    SetNuiFocus(true, true)
+end)
+
+RegisterNUICallback('ui:select', function(data, cb)
+    local id = data.id
+    local callback = data.callback or ''
+    if callback:sub(1, 7) == 'buycar:' then
+        local dealerKey = callback:sub(8)
+        TriggerServerEvent('srp:dealership:buy', dealerKey, id)
+    elseif callback == 'hire' then
+        TriggerServerEvent('srp:jobs:hire', id)
+    elseif callback == 'service' then
+        TriggerServerEvent('srp:mechanic:service', id, nil)
+    end
+    cb({ ok = true })
+end)
+
+RegisterNUICallback('ui:close', function(data, cb)
+    SetNuiFocus(false, false)
+    cb({ ok = true })
 end)
 
 RegisterCommand('buycar', function(source, args)

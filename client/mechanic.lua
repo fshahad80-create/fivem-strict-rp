@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: client/mechanic.lua
-    جهة العميل للميكانيك: نقاط الورشة + الإصلاح الفعلي.
+    جهة العميل للميكانيك: نقاط الورشة + الإصلاح الفعلي + واجهة الخدمات.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -47,10 +47,23 @@ CreateThread(function()
 end)
 
 RegisterNetEvent('srp:mechanic:showGarages', function(garages, services)
-    notify('خدمات الورشة:', 'primary')
+    local items = {}
     for key, s in pairs(services) do
-        notify(('%s : $%s — /service %s'):format(s.label, s.price, key), 'inform')
+        items[#items+1] = {
+            id = key,
+            title = s.label,
+            sub = ('مدة: %s دقيقة'):format(s.duration or 0),
+            price = s.price,
+        }
     end
+    SendNUIMessage({
+        action = 'openModal',
+        title = 'خدمات الورشة',
+        items = items,
+        foot = 'اختر الخدمة المطلوبة',
+        callback = 'service',
+    })
+    SetNuiFocus(true, true)
 end)
 
 RegisterNetEvent('srp:mechanic:doService', function(serviceKey, plate)
