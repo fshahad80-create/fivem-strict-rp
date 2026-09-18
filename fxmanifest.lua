@@ -2,10 +2,10 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-name 'fivem-strict-rp'
+name 'AL-FORSAN-RP'
 author 'AL-FORSAN RP'
-description '⚔️ الفرسان RP — نظام سيرفر RP مشدد (30 نظاماً) + الهوية الموحّدة.'
-version '3.6.0'
+description '⚔️ الفرسان RP — سيرفر RP مشدد متكامل (30 نظاماً) + الهوية + العناصر والوظائف.'
+version '3.8.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -67,6 +67,7 @@ client_scripts {
     'client/scrapyard.lua',
     'client/carplay.lua',
     'client/admin.lua',
+    'client/branding.lua',
     'client/tablet.lua',
 }
 
