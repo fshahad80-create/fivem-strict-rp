@@ -1,12 +1,13 @@
 --[[
     fivem-strict-rp :: client/dealerships.lua
-    جهة العميل للمعارض: نقاط التفاعل + واجهة الشراء الرسومية.
+    جهة العميل للمعارض: نقاط التفاعل + الاستلام الفوري.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
 local D = Dealerships
 
 local lastAction = 0
+
 local function notify(msg, kind) TriggerEvent('QBCore:Notify', msg, kind or 'primary') end
 
 CreateThread(function()
@@ -68,6 +69,45 @@ RegisterNetEvent('srp:dealership:showStock', function(dealerKey, list)
         callback = 'buycar:' .. dealerKey,
     })
     SetNuiFocus(true, true)
+end)
+
+-- ── الاستلام الفوري للمركبة ─────────────────────────────────
+RegisterNetEvent('srp:dealership:delivered', function(model, plate, citizenid, spawn, settings)
+    settings = settings or D.Settings
+    if not spawn then
+        notify('تم الشراء — استلم سيارتك من الكراج.', 'inform')
+        return
+    end
+
+    local sx, sy, sz = spawn.x, spawn.y, spawn.z
+    local heading = spawn.h or 0.0
+
+    RequestModel(model)
+    local timeout = 0
+    while not HasModelLoaded(model) and timeout < 100 do
+        Wait(50)
+        timeout = timeout + 1
+    end
+    if not HasModelLoaded(model) then
+        notify('تعذّر استلام المركبة الآن — راجع الكراج.', 'error')
+        return
+    end
+
+    local veh = CreateVehicle(model, sx, sy, sz, heading, true, false)
+    SetVehicleNumberPlateText(veh, plate or 'SRP')
+    SetVehicleOnGroundProperly(veh)
+    SetVehicleHasBeenOwnedByPlayer(veh, true)
+    SetVehicleNeedsToBeHotwired(veh, false)
+    SetEntityAsMissionEntity(veh, true, true)
+    SetModelAsNoLongerNeeded(model)
+
+    if settings.giveKeysOnDelivery then
+        local ped = PlayerPedId()
+        TaskWarpPedIntoVehicle(ped, veh, -1)
+        SetVehicleEngineOn(veh, true, true, false)
+    end
+
+    notify('تم استلام مركبتك في المعرض.', 'success')
 end)
 
 RegisterNUICallback('ui:select', function(data, cb)

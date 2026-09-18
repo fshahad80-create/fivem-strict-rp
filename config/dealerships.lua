@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/dealerships.lua
-    نظام معارض السيارات — الإعدادات.
+    نظام معارض السيارات — الإعدادات (مع الاستلام الفوري).
 ]]
 
 Dealerships = {}
@@ -11,6 +11,11 @@ Dealerships.Settings = {
     registrationFee = 350,
     requireOnDuty = true,
     maxOwnedVehicles = 8,
+    -- الاستلام الفوري
+    instantDelivery = true,
+    deliveryPlateStyle = 'srp',
+    giveKeysOnDelivery = true,
+    deliveryTimeoutMs = 8000,
 }
 
 Dealerships.List = {

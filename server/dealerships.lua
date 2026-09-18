@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: server/dealerships.lua
-    منطق معارض السيارات — QBCore.
+    منطق معارض السيارات — QBCore (مع الاستلام الفوري).
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -75,6 +75,10 @@ RegisterNetEvent('srp:dealership:buy', function(dealerKey, model)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)]],
         { Player.PlayerData.license, Player.PlayerData.citizenid, model, GetHashKey(model), '{}', plate, 'pillboxgarage', 1 })
     consumeStock(model)
+    -- الاستلام الفوري
+    local dealer = D.List[dealerKey]
+    local spawn = dealer and dealer.spawn or nil
+    TriggerClientEvent('srp:dealership:delivered', src, model, plate, Player.PlayerData.citizenid, spawn, D.Settings)
     TriggerClientEvent('QBCore:Notify', src, ('تم شراء %s بـ $%s (تسجيل: $%s)'):format(veh.label, veh.price, D.Settings.registrationFee), 'success')
 end)
 
