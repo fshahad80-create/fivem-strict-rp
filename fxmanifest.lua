@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة + تشليح المركبات المرتبط بالتركيب.'
-version '3.2.0'
+description 'نظام سيرفر RP مشدد — كل الأنظمة (30 نظاماً) + تابلت الأدمن الشامل.'
+version '3.4.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -34,6 +34,8 @@ shared_scripts {
     'config/stalls.lua',
     'config/phone.lua',
     'config/scrapyard.lua',
+    'config/carplay.lua',
+    'config/admin.lua',
 }
 
 client_scripts {
@@ -62,6 +64,8 @@ client_scripts {
     'client/stalls.lua',
     'client/phone.lua',
     'client/scrapyard.lua',
+    'client/carplay.lua',
+    'client/admin.lua',
     'client/tablet.lua',
 }
 
@@ -95,6 +99,8 @@ server_scripts {
     'server/stalls.lua',
     'server/phone.lua',
     'server/scrapyard.lua',
+    'server/carplay.lua',
+    'server/admin.lua',
 }
 
 ui_page 'html/index.html'
