@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: client/scrapyard.lua
-    تشليح المركبات — مناطق · تفاعل · بيع · حمولة.
+    تشليح المركبات — مناطق · تفاعل · بيع · حمولة · استخراج قطعة من سيارة.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -10,6 +10,7 @@ local myWorker = {}
 local myOutputs = {}
 local myBag = {}
 local lastAction = 0
+local currentExtractPlate = nil
 local function notify(msg, kind) TriggerEvent('QBCore:Notify', msg, kind or 'primary') end
 
 local function getClosestVehicle()
@@ -45,7 +46,10 @@ CreateThread(function()
                     if IsControlJustReleased(0, 38) and (GetGameTimer() - lastAction) > 1500 then
                         lastAction = GetGameTimer()
                         local netId = VehToNet(veh)
-                        TriggerServerEvent('srp:scrapyard:dismantle', netId, GetVehicleEngineHealth(veh), GetVehicleBodyHealth(veh))
+                        local plate = GetVehicleNumberPlateText(veh):gsub("%s+", "")
+                        local engineHealth = GetVehicleEngineHealth(veh)
+                        local bodyHealth = GetVehicleBodyHealth(veh)
+                        TriggerServerEvent('srp:scrapyard:dismantle', netId, plate, engineHealth, bodyHealth)
                         startDismantleAnim()
                     end
                 end
@@ -70,6 +74,7 @@ end)
 
 function openMainMenu()
     local items = {
+        { id = 'extract', title = 'استخراج قطعة', sub = 'اسحب قطعة مركّبة من سيارة قريبة' },
         { id = 'sell', title = 'بيع القطع', sub = 'استرداد قيمة القطع المفكّكة' },
         { id = 'bag',  title = 'حمولتي', sub = 'عرض القطع التي حصلت عليها' },
     }
@@ -77,6 +82,41 @@ function openMainMenu()
     SendNUIMessage({ action = 'openModal', title = 'التشليح', items = items, foot = foot, callback = 'scrapyard' })
     SetNuiFocus(true, true)
 end
+
+-- ── استخراج قطعة مركّبة من سيارة ────────────────────────────
+function openExtractMenu()
+    local veh = getClosestVehicle()
+    if veh == 0 then notify('لا توجد مركبة قريبة.', 'error') return end
+    local plate = GetVehicleNumberPlateText(veh):gsub("%s+", "")
+    currentExtractPlate = plate
+    TriggerServerEvent('srp:install:requestFitted', plate)
+end
+
+RegisterNetEvent('srp:install:showFitted', function(plate, list, effects)
+    if plate ~= currentExtractPlate then
+        local items = {}
+        for _, part in ipairs(list) do
+            local eff = effects[part]
+            items[#items+1] = { id = 'noop', title = (eff and eff.label or part), sub = (eff and eff.category or '') }
+        end
+        if #items == 0 then items[#items+1] = { id = 'noop', title = 'لا قطع مركّبة', sub = '' } end
+        SendNUIMessage({ action = 'openModal', title = 'قطع السيارة', items = items, foot = '', callback = 'none' })
+        SetNuiFocus(true, true)
+        return
+    end
+    if #list == 0 then
+        notify('لا توجد قطع مركّبة على هذه السيارة.', 'inform')
+        currentExtractPlate = nil
+        return
+    end
+    local items = {}
+    for _, part in ipairs(list) do
+        local eff = effects[part]
+        items[#items+1] = { id = 'extractpart:' .. part, title = ('🔧 ' .. (eff and eff.label or part)), sub = ('الفئة: %s — اضغط للاستخراج'):format(eff and eff.category or '') }
+    end
+    SendNUIMessage({ action = 'openModal', title = 'استخراج قطعة — ' .. plate, items = items, foot = 'تُسحب القطعة لحمولتك', callback = 'scrapyard' })
+    SetNuiFocus(true, true)
+end)
 
 function openSellMenu()
     local items = {}
@@ -104,6 +144,14 @@ RegisterNUICallback('ui:select', function(data, cb)
     if callback == 'scrapyard' then
         if id == 'sell' then openSellMenu()
         elseif id == 'bag' then openBagMenu()
+        elseif id == 'extract' then openExtractMenu()
+        elseif id:sub(1, 12) == 'extractpart:' then
+            local partKey = id:sub(13)
+            local veh = getClosestVehicle()
+            if veh == 0 then notify('لا توجد مركبة قريبة.', 'error') return end
+            local plate = GetVehicleNumberPlateText(veh):gsub("%s+", "")
+            TriggerServerEvent('srp:scrapyard:extractPart', VehToNet(veh), plate, partKey)
+            currentExtractPlate = nil
         elseif id:sub(1, 9) == 'sellitem:' then TriggerServerEvent('srp:scrapyard:sell', id:sub(10))
         end
     end
