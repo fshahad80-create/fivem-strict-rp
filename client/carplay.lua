@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: client/carplay.lua
-    الكار بلاي + قيادة ذاتية + تثبيت سرعة + مانع مفتاح T.
+    الكار بلاي + قيادة ذاتية (P) + تثبيت سرعة (N · أسهم) + مانع مفتاح T.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -132,7 +132,7 @@ RegisterNUICallback('carplay:close', function(data, cb)
     cb({ ok = true })
 end)
 
--- ══════════════ القيادة الذاتية ══════════════
+-- ══════════════ القيادة الذاتية (P) ══════════════
 local AP = CP.Autopilot
 local autopilot = false
 local autopilotSpeed = AP.defaultSpeed
@@ -195,7 +195,7 @@ CreateThread(function()
     end
 end)
 
--- ══════════════ تثبيت السرعة ══════════════
+-- ══════════════ تثبيت السرعة (N · أسهم) ══════════════
 local CC = CP.Cruise
 local cruise = false
 local cruiseSpeed = CC.defaultSpeed
@@ -206,7 +206,7 @@ function toggleCruise()
     cruise = not cruise
     if cruise then
         cruiseSpeed = math.max(CC.minSpeed, math.floor(GetEntitySpeed(veh) * 3.6))
-        notify('🎯 تثبيت السرعة: ' .. cruiseSpeed .. ' كم/س', 'success')
+        notify('🎯 تثبيت السرعة: ' .. cruiseSpeed .. ' كم/س — الأسهم ↑↓ للتحكم', 'success')
     else
         notify('أُلغي تثبيت السرعة.', 'inform')
     end
@@ -222,9 +222,9 @@ CreateThread(function()
                 cruise = false
             else
                 local target = cruiseSpeed / 3.6
-                if IsControlPressed(0, 71) then SetVehicleForwardSpeed(veh, target) end
-                if IsControlJustPressed(0, 10) then cruiseSpeed = math.min(CC.maxSpeed, cruiseSpeed + CC.step) end
-                if IsControlJustPressed(0, 11) then cruiseSpeed = math.max(CC.minSpeed, cruiseSpeed - CC.step) end
+                if not IsControlPressed(0, 71) then SetVehicleForwardSpeed(veh, target) end
+                if IsControlJustPressed(0, 27) then cruiseSpeed = math.min(CC.maxSpeed, cruiseSpeed + CC.step); notify('🎯 السرعة: ' .. cruiseSpeed, 'primary') end
+                if IsControlJustPressed(0, 173) then cruiseSpeed = math.max(CC.minSpeed, cruiseSpeed - CC.step); notify('🎯 السرعة: ' .. cruiseSpeed, 'primary') end
                 if IsControlJustPressed(0, 72) then cruise = false; notify('أُلغي تثبيت السرعة (فرملة).', 'inform') end
             end
         end

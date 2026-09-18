@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/carplay.lua
-    نظام الكار بلاي والمركبات المتقدم + قيادة ذاتية + تثبيت سرعة + مانع مفتاح T
+    نظام الكار بلاي والمركبات المتقدم + قيادة ذاتية (P) + تثبيت سرعة (N) + مانع مفتاح T
 ]]
 
 Carplay = {}
@@ -15,10 +15,10 @@ Carplay.Settings = {
     radioStations    = 6,
 }
 
--- القيادة الذاتية
+-- القيادة الذاتية (مفتاح P)
 Carplay.Autopilot = {
     enabled         = true,
-    key             = "F5",
+    key             = "P",
     defaultSpeed    = 60,
     minSpeed        = 30,
     maxSpeed        = 120,
@@ -31,12 +31,12 @@ Carplay.Autopilot = {
     minEngineHealth = 250.0,
 }
 
--- تثبيت السرعة
+-- تثبيت السرعة (المفتاح N · الأسهم للتحكم بالسرعة)
 Carplay.Cruise = {
     enabled        = true,
-    key            = "F6",
-    incKey         = "PAGEUP",
-    decKey         = "PAGEDOWN",
+    key            = "N",
+    incKey         = "UP",
+    decKey         = "DOWN",
     defaultSpeed   = 80,
     minSpeed       = 20,
     maxSpeed       = 200,
@@ -64,14 +64,14 @@ Carplay.Stations = {
 }
 
 Carplay.VehicleControls = {
-    engine   = { label = "المحرك",        icon = "🔑" },
-    radio    = { label = "الراديو",        icon = "📻" },
-    nav      = { label = "الملاحة",       icon = "🗺️" },
-    camera   = { label = "الكاميرا الخلفية", icon = "📹" },
-    hazards  = { label = "الخطر",         icon = "⚠️" },
-    lock     = { label = "قفل المركبة",   icon = "🔒" },
+    engine    = { label = "المحرك",        icon = "🔑" },
+    radio     = { label = "الراديو",        icon = "📻" },
+    nav       = { label = "الملاحة",       icon = "🗺️" },
+    camera    = { label = "الكاميرا الخلفية", icon = "📹" },
+    hazards   = { label = "الخطر",         icon = "⚠️" },
+    lock      = { label = "قفل المركبة",   icon = "🔒" },
     autopilot = { label = "القيادة الذاتية", icon = "🤖" },
-    cruise   = { label = "تثبيت السرعة",  icon = "🎯" },
+    cruise    = { label = "تثبيت السرعة",  icon = "🎯" },
 }
 
 Carplay.FuelTypes = {
