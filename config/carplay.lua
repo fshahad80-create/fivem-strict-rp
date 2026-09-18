@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/carplay.lua
-    نظام الكار بلاي والمركبات المتقدم
+    نظام الكار بلاي والمركبات المتقدم + قيادة ذاتية + تثبيت سرعة + مانع مفتاح T
 ]]
 
 Carplay = {}
@@ -15,6 +15,45 @@ Carplay.Settings = {
     radioStations    = 6,
 }
 
+-- القيادة الذاتية
+Carplay.Autopilot = {
+    enabled         = true,
+    key             = "F5",
+    defaultSpeed    = 60,
+    minSpeed        = 30,
+    maxSpeed        = 120,
+    scanDistance    = 30.0,
+    brakeDistance   = 12.0,
+    stopDistance    = 6.0,
+    watchPeds       = true,
+    watchVehicles   = true,
+    obeyTraffic     = false,
+    minEngineHealth = 250.0,
+}
+
+-- تثبيت السرعة
+Carplay.Cruise = {
+    enabled        = true,
+    key            = "F6",
+    incKey         = "PAGEUP",
+    decKey         = "PAGEDOWN",
+    defaultSpeed   = 80,
+    minSpeed       = 20,
+    maxSpeed       = 200,
+    step           = 10,
+    cancelOnBrake  = true,
+    cancelOnImpact = true,
+}
+
+-- مانع انزلاق مفتاح T
+Carplay.AntiSlip = {
+    enabled          = true,
+    blockedControl   = 74,
+    onlyWhileDriving = true,
+    drivingSpeedKmh  = 5,
+    hardBlock        = true,
+}
+
 Carplay.Stations = {
     { id = 1, label = "أخبار",     freq = "90.1",  genre = "news" },
     { id = 2, label = "رياضة",     freq = "92.5",  genre = "sport" },
@@ -25,12 +64,14 @@ Carplay.Stations = {
 }
 
 Carplay.VehicleControls = {
-    engine  = { label = "المحرك",        icon = "🔑" },
-    radio   = { label = "الراديو",        icon = "📻" },
-    nav     = { label = "الملاحة",       icon = "🗺️" },
-    camera  = { label = "الكاميرا الخلفية", icon = "📹" },
-    hazards = { label = "الخطر",         icon = "⚠️" },
-    lock    = { label = "قفل المركبة",   icon = "🔒" },
+    engine   = { label = "المحرك",        icon = "🔑" },
+    radio    = { label = "الراديو",        icon = "📻" },
+    nav      = { label = "الملاحة",       icon = "🗺️" },
+    camera   = { label = "الكاميرا الخلفية", icon = "📹" },
+    hazards  = { label = "الخطر",         icon = "⚠️" },
+    lock     = { label = "قفل المركبة",   icon = "🔒" },
+    autopilot = { label = "القيادة الذاتية", icon = "🤖" },
+    cruise   = { label = "تثبيت السرعة",  icon = "🎯" },
 }
 
 Carplay.FuelTypes = {
@@ -58,6 +99,10 @@ Carplay.Messages = {
     lockChanged  = "تغيّر حالة القفل",
     noVehicle    = "أنت لست داخل مركبة.",
     engineToggle = "تغيّر حالة المحرك",
+    autopilotOn  = "القيادة الذاتية مُفعّلة",
+    autopilotOff = "أُلغيت القيادة الذاتية",
+    cruiseOn     = "تثبيت السرعة مُفعّل",
+    cruiseOff    = "أُلغى تثبيت السرعة",
 }
 
 return Carplay
