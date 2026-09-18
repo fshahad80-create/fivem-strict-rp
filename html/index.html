@@ -8,26 +8,18 @@
 </head>
 <body>
     <div id="app">
-
-        <!-- عدّاد السجن -->
         <div id="jail" class="hidden">
             <div class="jail-title">تحت التوقيف</div>
             <div class="jail-timer" id="timer">00:00</div>
             <div class="jail-reason" id="reason"></div>
         </div>
-
-        <!-- HUD الاحتياجات -->
         <div id="needs" class="hidden">
             <div class="need-row"><span class="need-ico">🍔</span><div class="bar"><div id="bar-hunger" class="fill hunger"></div></div></div>
             <div class="need-row"><span class="need-ico">💧</span><div class="bar"><div id="bar-thirst" class="fill thirst"></div></div></div>
             <div class="need-row"><span class="need-ico">⚡</span><div class="bar"><div id="bar-energy" class="fill energy"></div></div></div>
             <div class="need-row"><span class="need-ico">🚿</span><div class="bar"><div id="bar-hygiene" class="fill hygiene"></div></div></div>
         </div>
-
-        <!-- شارة الطقس -->
         <div id="weather" class="hidden"><span id="weather-text">CLEAR</span></div>
-
-        <!-- نافذة عامة (وظائف/معارض/ورشة) -->
         <div id="modal" class="hidden">
             <div class="modal-box">
                 <div class="modal-head">
@@ -38,10 +30,19 @@
                 <div class="modal-foot" id="modal-foot"></div>
             </div>
         </div>
-
-        <!-- إشعار NUI -->
+        <div id="tablet" class="hidden">
+            <div class="tablet-frame">
+                <div class="tablet-top">
+                    <span class="tablet-logo">SRP Tablet</span>
+                    <span class="tablet-close" id="tablet-close">✕</span>
+                </div>
+                <div class="tablet-body">
+                    <div class="app-grid" id="app-grid"></div>
+                    <div class="app-content" id="app-content"><div class="app-empty">اختر تطبيقاً من الأعلى</div></div>
+                </div>
+            </div>
+        </div>
         <div id="toast" class="hidden"></div>
-
     </div>
     <script src="script.js"></script>
 </body>
