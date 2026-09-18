@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة + الميكانيك العميق.'
-version '1.7.0'
+description 'نظام سيرفر RP مشدد — كل الأنظمة + الميكانيك العميق + شجرة المسارات.'
+version '1.8.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -20,6 +20,7 @@ shared_scripts {
     'config/supply.lua',
     'config/install.lua',
     'config/tuning.lua',
+    'config/paths.lua',
 }
 
 client_scripts {
@@ -34,6 +35,7 @@ client_scripts {
     'client/supply.lua',
     'client/install.lua',
     'client/tuning.lua',
+    'client/paths.lua',
     'client/tablet.lua',
 }
 
@@ -53,6 +55,7 @@ server_scripts {
     'server/supply.lua',
     'server/install.lua',
     'server/tuning.lua',
+    'server/paths.lua',
 }
 
 ui_page 'html/index.html'
