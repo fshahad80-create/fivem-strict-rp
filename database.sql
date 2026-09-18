@@ -1,6 +1,7 @@
 -- fivem-strict-rp :: database.sql
 -- جداول كل الأنظمة (تُنشأ تلقائياً عند التشغيل).
 
+-- النظام 1: العقوبات
 CREATE TABLE IF NOT EXISTS `srp_penalty_points` (
     `citizenid` VARCHAR(50) NOT NULL PRIMARY KEY, `points` INT NOT NULL DEFAULT 0,
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `srp_wanted` (
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- النظام 2: الاقتصاد
 CREATE TABLE IF NOT EXISTS `srp_salary_log` (
     `id` INT AUTO_INCREMENT PRIMARY KEY, `citizenid` VARCHAR(50) NOT NULL,
     `job` VARCHAR(32) NOT NULL, `grade` INT NOT NULL, `gross` INT NOT NULL,
@@ -45,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `srp_insurance` (
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- النظام 3: الاحتياجات والطقس
 CREATE TABLE IF NOT EXISTS `srp_needs` (
     `citizenid` VARCHAR(50) NOT NULL PRIMARY KEY, `hunger` INT NOT NULL DEFAULT 100,
     `thirst` INT NOT NULL DEFAULT 100, `energy` INT NOT NULL DEFAULT 100,
@@ -58,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `srp_weather_state` (
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- النظام 4: القوانين والإشراف
 CREATE TABLE IF NOT EXISTS `srp_reports` (
     `id` INT AUTO_INCREMENT PRIMARY KEY, `reporter` VARCHAR(50) NOT NULL,
     `reporter_name` VARCHAR(64) NOT NULL, `target` VARCHAR(50) DEFAULT NULL,
@@ -79,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `srp_staff_points` (
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- النظام 5: الوظائف
 CREATE TABLE IF NOT EXISTS `srp_job_progress` (
     `citizenid` VARCHAR(50) NOT NULL, `job` VARCHAR(32) NOT NULL,
     `tasks` INT NOT NULL DEFAULT 0, `grade` INT NOT NULL DEFAULT 0,
@@ -87,8 +92,49 @@ CREATE TABLE IF NOT EXISTS `srp_job_progress` (
     PRIMARY KEY (`citizenid`, `job`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- النظام 6: المعارض
 CREATE TABLE IF NOT EXISTS `srp_dealer_progress` (
     `citizenid` VARCHAR(50) NOT NULL PRIMARY KEY, `sales` INT NOT NULL DEFAULT 0,
     `grade` INT NOT NULL DEFAULT 0, `earned` INT NOT NULL DEFAULT 0,
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- النظام 7: الأعمال
+CREATE TABLE IF NOT EXISTS `srp_businesses` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY, `type` VARCHAR(24) NOT NULL,
+    `owner` VARCHAR(50) NOT NULL, `level` INT NOT NULL DEFAULT 1,
+    `earned` BIGINT NOT NULL DEFAULT 0,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_owner` (`owner`), INDEX `idx_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `srp_business_workers` (
+    `business_id` INT NOT NULL, `citizenid` VARCHAR(50) NOT NULL,
+    `role` VARCHAR(32) NOT NULL, `wage_earned` BIGINT NOT NULL DEFAULT 0,
+    `since` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`business_id`, `citizenid`), INDEX `idx_cid` (`citizenid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- النظام 8: المزارع
+CREATE TABLE IF NOT EXISTS `srp_farm_plots` (
+    `business_id` INT NOT NULL, `plot_index` INT NOT NULL,
+    `crop` VARCHAR(24) NOT NULL, `planted_at` INT NOT NULL,
+    `watered` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`business_id`, `plot_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- النظام 9: الأراضي
+CREATE TABLE IF NOT EXISTS `srp_lands` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY, `owner` VARCHAR(50) NOT NULL,
+    `x` DOUBLE NOT NULL, `y` DOUBLE NOT NULL, `z` DOUBLE NOT NULL,
+    `radius` DOUBLE NOT NULL DEFAULT 20, `type` VARCHAR(24) NOT NULL DEFAULT 'residential',
+    `shape` VARCHAR(16) NOT NULL DEFAULT 'circle', `structures` TEXT DEFAULT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, INDEX `idx_owner` (`owner`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `srp_land_admin_log` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY, `staff` VARCHAR(50) NOT NULL,
+    `action` VARCHAR(24) NOT NULL, `target` VARCHAR(50) DEFAULT NULL,
+    `land_id` INT DEFAULT NULL, `detail` VARCHAR(255) DEFAULT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, INDEX `idx_staff` (`staff`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
