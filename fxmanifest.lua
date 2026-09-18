@@ -4,8 +4,8 @@ lua54 'yes'
 
 name 'fivem-strict-rp'
 author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — عقوبات، اقتصاد، احتياجات، قوانين.'
-version '1.1.0'
+description 'نظام سيرفر RP مشدد — عقوبات، اقتصاد، احتياجات، قوانين، وظائف، معارض، ميكانيك.'
+version '1.2.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
@@ -13,11 +13,16 @@ shared_scripts {
     'config/economy.lua',
     'config/needs.lua',
     'config/rules.lua',
+    'config/jobs.lua',
+    'config/dealerships.lua',
 }
 
 client_scripts {
     'client/penalties.lua',
     'client/needs.lua',
+    'client/jobs.lua',
+    'client/dealerships.lua',
+    'client/mechanic.lua',
 }
 
 server_scripts {
@@ -26,6 +31,9 @@ server_scripts {
     'server/economy.lua',
     'server/needs.lua',
     'server/rules.lua',
+    'server/jobs.lua',
+    'server/dealerships.lua',
+    'server/mechanic.lua',
 }
 
 ui_page 'html/index.html'
