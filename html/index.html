@@ -3,45 +3,114 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SRP UI</title>
+    <title>الفرسان RP</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div id="app">
+
         <div id="jail" class="hidden">
-            <div class="jail-title">تحت التوقيف</div>
+            <div class="jail-title">⚔️ تحت التوقيف</div>
             <div class="jail-timer" id="timer">00:00</div>
             <div class="jail-reason" id="reason"></div>
         </div>
+
         <div id="needs" class="hidden">
             <div class="need-row"><span class="need-ico">🍔</span><div class="bar"><div id="bar-hunger" class="fill hunger"></div></div></div>
             <div class="need-row"><span class="need-ico">💧</span><div class="bar"><div id="bar-thirst" class="fill thirst"></div></div></div>
             <div class="need-row"><span class="need-ico">⚡</span><div class="bar"><div id="bar-energy" class="fill energy"></div></div></div>
             <div class="need-row"><span class="need-ico">🚿</span><div class="bar"><div id="bar-hygiene" class="fill hygiene"></div></div></div>
         </div>
+
         <div id="weather" class="hidden"><span id="weather-text">CLEAR</span></div>
+
         <div id="modal" class="hidden">
             <div class="modal-box">
-                <div class="modal-head">
-                    <span id="modal-title">القائمة</span>
-                    <span class="modal-close" id="modal-close">✕</span>
-                </div>
+                <div class="modal-head"><span id="modal-title">القائمة</span><span class="modal-close" id="modal-close">✕</span></div>
                 <div class="modal-body" id="modal-body"></div>
                 <div class="modal-foot" id="modal-foot"></div>
             </div>
         </div>
+
+        <!-- التابلت -->
         <div id="tablet" class="hidden">
-            <div class="tablet-frame">
-                <div class="tablet-top">
-                    <span class="tablet-logo">SRP Tablet</span>
-                    <span class="tablet-close" id="tablet-close">✕</span>
+            <div class="tab-frame">
+                <div class="tab-bar">
+                    <div class="tab-brand"><span class="tab-logo">⚔️</span><b>الفرسان</b><small>RP</small></div>
+                    <div class="tab-clock" id="tab-clock">--:--</div>
+                    <div class="tab-close" id="tablet-close">✕</div>
                 </div>
-                <div class="tablet-body">
-                    <div class="app-grid" id="app-grid"></div>
-                    <div class="app-content" id="app-content"><div class="app-empty">اختر تطبيقاً من الأعلى</div></div>
+                <div class="tab-main">
+                    <div class="tab-side">
+                        <div class="tab-wallet">
+                            <div class="w-row"><span>💵 نقد</span><b id="tab-cash">$0</b></div>
+                            <div class="w-row"><span>🏦 بنك</span><b id="tab-bank">$0</b></div>
+                        </div>
+                        <div class="app-grid" id="app-grid"></div>
+                    </div>
+                    <div class="tab-view">
+                        <div class="tab-view-head" id="tab-view-title">اختر تطبيقاً</div>
+                        <div class="app-content" id="app-content"><div class="app-empty">👆 اختر تطبيقاً من القائمة</div></div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- الكار بلاي -->
+        <div id="carplay" class="hidden">
+            <div class="cp-frame">
+                <div class="cp-top">
+                    <div class="cp-title">🚘 CarPlay · <span id="cp-plate">---</span></div>
+                    <div class="cp-status"><span id="cp-fuel">⛽ --</span><span id="cp-speed">🏁 0 كم/س</span></div>
+                    <div class="cp-close" id="carplay-close">✕</div>
+                </div>
+                <div class="cp-body">
+                    <div class="cp-tabs">
+                        <div class="cp-tab active" data-cptab="radio">📻 راديو</div>
+                        <div class="cp-tab" data-cptab="nav">🗺️ ملاحة</div>
+                        <div class="cp-tab" data-cptab="car">🚗 السيارة</div>
+                        <div class="cp-tab" data-cptab="auto">🤖 القيادة</div>
+                    </div>
+                    <div class="cp-panels">
+                        <div class="cp-panel active" id="cp-panel-radio">
+                            <div class="cp-stations" id="cp-stations"></div>
+                            <div class="cp-volume"><span>🔊</span><input type="range" id="cp-volume" min="0" max="100" value="50" /><b id="cp-vol-val">50%</b></div>
+                        </div>
+                        <div class="cp-panel" id="cp-panel-nav">
+                            <div class="cp-nav-list" id="cp-nav-list"></div>
+                            <div class="cp-hint">اختر وجهة لتحديد المسار على الخريطة</div>
+                        </div>
+                        <div class="cp-panel" id="cp-panel-car">
+                            <div class="cp-grid" id="cp-controls"></div>
+                            <div class="cp-vehstatus" id="cp-vehstatus"></div>
+                        </div>
+                        <div class="cp-panel" id="cp-panel-auto">
+                            <button class="cp-big-btn" id="cp-autopilot">🤖 القيادة الذاتية <small>(P)</small></button>
+                            <button class="cp-big-btn" id="cp-cruise">🎯 تثبيت السرعة <small>(N)</small></button>
+                            <div class="cp-hint">الأسهم ↑↓ للتحكم بسرعة التثبيت</div>
+                            <div class="cp-big-status" id="cp-auto-status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الجوال -->
+        <div id="phone" class="hidden">
+            <div class="ph-frame">
+                <div class="ph-notch"></div>
+                <div class="ph-statusbar"><span id="ph-time">--:--</span><span class="ph-signal">▮▮▮ 5G 🔋</span></div>
+                <div class="ph-screen">
+                    <div class="ph-home" id="ph-home"></div>
+                    <div class="ph-app hidden" id="ph-app">
+                        <div class="ph-app-head"><span class="ph-back" id="ph-back">‹ رجوع</span><b id="ph-app-title">التطبيق</b></div>
+                        <div class="ph-app-body" id="ph-app-body"></div>
+                    </div>
+                </div>
+                <div class="ph-homebar" id="ph-homebar"></div>
+            </div>
+        </div>
+
         <div id="toast" class="hidden"></div>
     </div>
     <script src="script.js"></script>
