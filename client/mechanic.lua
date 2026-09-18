@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: client/mechanic.lua
-    جهة العميل للميكانيك: نقاط الورشة + الإصلاح الفعلي + واجهة الخدمات.
+    جهة العميل للميكانيك: ورشة + تصنيع المحركات والقطع.
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -49,22 +49,37 @@ end)
 RegisterNetEvent('srp:mechanic:showGarages', function(garages, services)
     local items = {}
     for key, s in pairs(services) do
-        items[#items+1] = {
-            id = key,
-            title = s.label,
-            sub = ('مدة: %s دقيقة'):format(s.duration or 0),
-            price = s.price,
-        }
+        items[#items+1] = { id = key, title = s.label, sub = ('مدة: %s دقيقة'):format(s.duration or 0), price = s.price }
     end
-    SendNUIMessage({
-        action = 'openModal',
-        title = 'خدمات الورشة',
-        items = items,
-        foot = 'اختر الخدمة المطلوبة',
-        callback = 'service',
-    })
+    items[#items+1] = { id = 'craftmenu', title = 'تصنيع قطع ومحركات', sub = 'محركات V6/V8/LS/Race · قير · دهان · قطع استهلاكية' }
+    SendNUIMessage({ action = 'openModal', title = 'ورشة الميكانيك', items = items, foot = 'اختر خدمة أو تصنيعاً', callback = 'mechanic' })
     SetNuiFocus(true, true)
 end)
+
+local function openMechCraftMenu()
+    local S = Supply
+    local items = {}
+    for key, rec in pairs(S.MechanicRecipes or {}) do
+        local inputsStr = {}
+        for item, n in pairs(rec.inputs) do
+            local nm = (S.Raw[item] and S.Raw[item].label) or (S.Crafted[item] and S.Crafted[item].label) or item
+            inputsStr[#inputsStr+1] = ('%s×%s'):format(nm, n)
+        end
+        local toolsStr = ''
+        if rec.tools then
+            for tool, n in pairs(rec.tools) do
+                toolsStr = ' | أداة: ' .. ((S.Crafted[tool] and S.Crafted[tool].label) or tool) .. '×' .. n
+            end
+        end
+        items[#items+1] = {
+            id = 'mechcraft:' .. key,
+            title = (rec.icon .. ' ' .. rec.label) .. (rec.tier and (' [T' .. rec.tier .. ']') or ''),
+            sub = 'المواد: ' .. table.concat(inputsStr, ' + ') .. toolsStr,
+        }
+    end
+    SendNUIMessage({ action = 'openModal', title = 'تصنيع الورشة', items = items, foot = 'اختر ما تريد تصنيعه', callback = 'mechanic' })
+    SetNuiFocus(true, true)
+end
 
 RegisterNetEvent('srp:mechanic:doService', function(serviceKey, plate)
     local veh = GetVehiclePedIsIn(PlayerPedId(), false)
@@ -104,6 +119,23 @@ RegisterNetEvent('srp:mechanic:routeTo', function(coords)
     SetBlipSprite(activeRoute, 1) SetBlipColour(activeRoute, 1)
     SetBlipRoute(activeRoute, true) SetBlipRouteColour(activeRoute, 1)
     notify('تم تحديد موقع العميل على الخريطة.', 'success')
+end)
+
+RegisterNUICallback('ui:select', function(data, cb)
+    local id = data.id or ''
+    local callback = data.callback or ''
+    if callback == 'service' then
+        TriggerServerEvent('srp:mechanic:service', id, nil)
+    elseif callback == 'mechanic' then
+        if id == 'craftmenu' then
+            openMechCraftMenu()
+        elseif id:sub(1, 10) == 'mechcraft:' then
+            TriggerServerEvent('srp:supply:craft', id:sub(11), true)
+        else
+            TriggerServerEvent('srp:mechanic:service', id, nil)
+        end
+    end
+    cb({ ok = true })
 end)
 
 RegisterCommand('callmech', function() TriggerServerEvent('srp:mechanic:call') end, false)

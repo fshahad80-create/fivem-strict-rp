@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: config/supply.lua
-    سلسلة التوريد: منجم → حداد → ميكانيكي
+    سلسلة التوريد: منجم → حداد → ميكانيكي (مع تصنيع المحركات).
 ]]
 
 Supply = {}
@@ -51,6 +51,64 @@ Supply.MechanicRequirements = {
     performance = { label = "تعديل أداء",   parts = { engine_part = 2, suspension_kit = 1 }, basePrice = 2500 },
     brakes      = { label = "تغيير فرامل",  parts = { brake_pad = 2, wrench = 1 },     basePrice = 800 },
     tires       = { label = "تغيير إطارات", parts = { tire = 4 },                     basePrice = 600 },
+}
+
+-- تصنيع الميكانيكي (محركات · قير · دهان · قطع استهلاكية)
+Supply.MechanicCrafted = {
+    engine_v6   = { label = "محرك V6",   icon = "🔧", baseValue = 4500,  weight = 40, category = "engine", tier = 1 },
+    engine_v8   = { label = "محرك V8",   icon = "🔧", baseValue = 8000,  weight = 50, category = "engine", tier = 2 },
+    engine_ls   = { label = "محرك LS",   icon = "🔧", baseValue = 12000, weight = 55, category = "engine", tier = 3 },
+    engine_race = { label = "محرك Race", icon = "🔧", baseValue = 20000, weight = 60, category = "engine", tier = 4 },
+    trans_standard = { label = "قير عادي",  icon = "⚙️", baseValue = 3500,  weight = 35, category = "transmission", tier = 1 },
+    trans_sport    = { label = "قير رياضي", icon = "⚙️", baseValue = 7000,  weight = 40, category = "transmission", tier = 2 },
+    trans_race     = { label = "قير سباق",  icon = "⚙️", baseValue = 14000, weight = 45, category = "transmission", tier = 3 },
+    paint_basic   = { label = "طلاء أساسي",    icon = "🎨", baseValue = 1200, weight = 10, category = "paint", tier = 1 },
+    paint_premium = { label = "طلاء فاخر",     icon = "🎨", baseValue = 3000, weight = 12, category = "paint", tier = 2 },
+    paint_custom  = { label = "طلاء مخصص",     icon = "🎨", baseValue = 6000, weight = 15, category = "paint", tier = 3 },
+    body_repair   = { label = "عدة إصلاح بدن", icon = "🚗", baseValue = 2200, weight = 20, category = "body",  tier = 1 },
+    oil_filter  = { label = "فلتر زيت",   icon = "🛢️", baseValue = 180, weight = 2, category = "consumable" },
+    air_filter  = { label = "فلتر هواء",  icon = "🌬️", baseValue = 220, weight = 2, category = "consumable" },
+    spark_plugs = { label = "بوجيهات",    icon = "🔌", baseValue = 340, weight = 3, category = "consumable" },
+    engine_oil  = { label = "زيت محرك",   icon = "🛢️", baseValue = 400, weight = 6, category = "consumable" },
+    coolant     = { label = "سائل تبريد", icon = "🧴", baseValue = 260, weight = 4, category = "consumable" },
+    brake_fluid = { label = "سائل فرامل", icon = "🧴", baseValue = 300, weight = 4, category = "consumable" },
+}
+
+Supply.MechanicRecipes = {
+    engine_v6   = { label = "تجميع محرك V6",   icon = "🔧", workshop = true, tier = 1, time = 40,
+        inputs = { iron_ore = 10, steel_plate = 4, metal_beam = 2 }, tools = { welder_tool = 1 }, output = "engine_v6", outputQty = 1 },
+    engine_v8   = { label = "تجميع محرك V8",   icon = "🔧", workshop = true, tier = 2, time = 60,
+        inputs = { iron_ore = 16, steel_plate = 6, metal_beam = 4 }, tools = { welder_tool = 1 }, output = "engine_v8", outputQty = 1 },
+    engine_ls   = { label = "تجميع محرك LS",   icon = "🔧", workshop = true, tier = 3, time = 90,
+        inputs = { iron_ore = 22, aluminum = 8, steel_plate = 8, metal_beam = 5 }, tools = { welder_tool = 2 }, output = "engine_ls", outputQty = 1 },
+    engine_race = { label = "تجميع محرك Race", icon = "🔧", workshop = true, tier = 4, time = 150,
+        inputs = { iron_ore = 30, aluminum = 14, copper_ore = 10, steel_plate = 12, metal_beam = 8 }, tools = { welder_tool = 2 }, output = "engine_race", outputQty = 1 },
+    trans_standard = { label = "تجميع قير عادي",  icon = "⚙️", workshop = true, tier = 1, time = 35,
+        inputs = { iron_ore = 8, steel_plate = 3 }, tools = { welder_tool = 1 }, output = "trans_standard", outputQty = 1 },
+    trans_sport    = { label = "تجميع قير رياضي", icon = "⚙️", workshop = true, tier = 2, time = 55,
+        inputs = { iron_ore = 14, aluminum = 5, steel_plate = 5 }, tools = { welder_tool = 1 }, output = "trans_sport", outputQty = 1 },
+    trans_race     = { label = "تجميع قير سباق",  icon = "⚙️", workshop = true, tier = 3, time = 100,
+        inputs = { iron_ore = 20, aluminum = 9, copper_ore = 6, metal_beam = 4 }, tools = { welder_tool = 2 }, output = "trans_race", outputQty = 1 },
+    paint_basic   = { label = "خلط طلاء أساسي", icon = "🎨", workshop = true, tier = 1, time = 20,
+        inputs = { copper_ore = 2, coal = 2 }, output = "paint_basic", outputQty = 2 },
+    paint_premium = { label = "خلط طلاء فاخر",  icon = "🎨", workshop = true, tier = 2, time = 35,
+        inputs = { copper_ore = 5, aluminum = 2, coal = 3 }, output = "paint_premium", outputQty = 1 },
+    paint_custom  = { label = "خلط طلاء مخصص",  icon = "🎨", workshop = true, tier = 3, time = 60,
+        inputs = { copper_ore = 8, aluminum = 4, coal = 5 }, output = "paint_custom", outputQty = 1 },
+    body_repair   = { label = "تجهيز عدة بدن",  icon = "🚗", workshop = true, tier = 1, time = 30,
+        inputs = { steel_plate = 4, metal_beam = 2 }, tools = { welder_tool = 1 }, output = "body_repair", outputQty = 1 },
+    oil_filter  = { label = "تجهيز فلتر زيت",   icon = "🛢️", workshop = true, tier = 1, time = 8,
+        inputs = { iron_ore = 2, copper_ore = 1 }, output = "oil_filter", outputQty = 2 },
+    air_filter  = { label = "تجهيز فلتر هواء",  icon = "🌬️", workshop = true, tier = 1, time = 8,
+        inputs = { iron_ore = 1, copper_ore = 2 }, output = "air_filter", outputQty = 2 },
+    spark_plugs = { label = "تجهيز بوجيهات",    icon = "🔌", workshop = true, tier = 1, time = 10,
+        inputs = { copper_ore = 3 }, output = "spark_plugs", outputQty = 4 },
+    engine_oil  = { label = "تعبئة زيت محرك",   icon = "🛢️", workshop = true, tier = 1, time = 12,
+        inputs = { coal = 4, copper_ore = 1 }, output = "engine_oil", outputQty = 2 },
+    coolant     = { label = "تحضير سائل تبريد", icon = "🧴", workshop = true, tier = 1, time = 10,
+        inputs = { copper_ore = 1, coal = 3 }, output = "coolant", outputQty = 2 },
+    brake_fluid = { label = "تحضير سائل فرامل", icon = "🧴", workshop = true, tier = 1, time = 10,
+        inputs = { copper_ore = 2, coal = 2 }, output = "brake_fluid", outputQty = 2 },
 }
 
 Supply.Locations = {

@@ -1,6 +1,6 @@
 --[[
     fivem-strict-rp :: server/supply.lua
-    سلسلة التوريد: منجم → حداد → ميكانيكي.
+    سلسلة التوريد: منجم → حداد → ميكانيكي (مع تصنيع المحركات).
 ]]
 
 local QBCore = exports['qb-core']:GetCoreObject()
@@ -114,13 +114,16 @@ RegisterNetEvent('srp:supply:sellRaw', function(oreKey, qty)
     TriggerClientEvent('QBCore:Notify', src, ('بعت %s × %s بـ $%s'):format(ore.label, qty, value), 'success')
 end)
 
-RegisterNetEvent('srp:supply:craft', function(recipeKey)
+RegisterNetEvent('srp:supply:craft', function(recipeKey, isMechanic)
     local src = source
     local Player = getPlayer(src)
     if not Player then return end
-    local recipe = S.Recipes[recipeKey]
+    local isMech = isMechanic or Player.PlayerData.job.name == 'mechanic'
+    local recipeSet = isMech and S.MechanicRecipes or S.Recipes
+    local recipe = recipeSet[recipeKey]
     if not recipe then return end
-    if Player.PlayerData.job.name ~= 'blacksmith' then
+    local requiredJob = isMech and 'mechanic' or 'blacksmith'
+    if Player.PlayerData.job.name ~= requiredJob then
         TriggerClientEvent('QBCore:Notify', src, 'هذه ليست وظيفتك.', 'error') return
     end
     if not Player.PlayerData.job.onduty then
@@ -134,6 +137,13 @@ RegisterNetEvent('srp:supply:craft', function(recipeKey)
     if recipe.fuel and recipe.fuel > 0 and getQty(Player, 'coal') < recipe.fuel then
         TriggerClientEvent('QBCore:Notify', src, 'تحتاج فحماً للصهر.', 'error') return
     end
+    if recipe.tools then
+        for tool, need in pairs(recipe.tools) do
+            if getQty(Player, tool) < need then
+                TriggerClientEvent('QBCore:Notify', src, ('تنقصك أداة: %s'):format(tool), 'error') return
+            end
+        end
+    end
     for item, need in pairs(recipe.inputs) do removeItem(Player, item, need) end
     if recipe.fuel and recipe.fuel > 0 then removeItem(Player, 'coal', recipe.fuel) end
     local cid = Player.PlayerData.citizenid
@@ -143,7 +153,8 @@ RegisterNetEvent('srp:supply:craft', function(recipeKey)
         local P = getPlayer(src)
         if not P then return end
         addItem(P, recipe.output, recipe.outputQty)
-        logAction(cid, 'craft', recipe.output, recipe.outputQty, recipe.outputQty * (S.Crafted[recipe.output] and S.Crafted[recipe.output].baseValue or 0))
+        local base = (S.Crafted[recipe.output] or S.MechanicCrafted[recipe.output] or {}).baseValue or 0
+        logAction(cid, 'craft', recipe.output, recipe.outputQty, base * recipe.outputQty)
         TriggerClientEvent('QBCore:Notify', src, ('صنعت %s × %s'):format(recipe.label, recipe.outputQty), 'success')
         Crafting[cid] = nil
     end)
@@ -153,7 +164,7 @@ RegisterNetEvent('srp:supply:sellCrafted', function(itemKey, qty)
     local src = source
     local Player = getPlayer(src)
     if not Player then return end
-    local crafted = S.Crafted[itemKey]
+    local crafted = S.Crafted[itemKey] or S.MechanicCrafted[itemKey]
     if not crafted then return end
     qty = tonumber(qty) or getQty(Player, itemKey)
     if qty <= 0 or getQty(Player, itemKey) < qty then
@@ -194,7 +205,9 @@ RegisterNetEvent('srp:supply:requestStock', function()
     local combined = {}
     for k in pairs(S.Raw) do local q = getQty(Player, k); if q > 0 then combined[k] = q end end
     for k in pairs(S.Crafted) do local q = getQty(Player, k); if q > 0 then combined[k] = q end end
-    TriggerClientEvent('srp:supply:showStock', src, combined, { raw = S.Raw, crafted = S.Crafted, recipes = S.Recipes, job = Player.PlayerData.job.name })
+    for k in pairs(S.MechanicCrafted) do local q = getQty(Player, k); if q > 0 then combined[k] = q end end
+    TriggerClientEvent('srp:supply:showStock', src, combined,
+        { raw = S.Raw, crafted = S.Crafted, mechanic = S.MechanicCrafted, recipes = S.Recipes, mechRecipes = S.MechanicRecipes, job = Player.PlayerData.job.name })
 end)
 
 RegisterNetEvent('QBCore:Server:PlayerLoaded', function(Player)
