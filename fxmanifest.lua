@@ -3,12 +3,13 @@ game 'gta5'
 lua54 'yes'
 
 name 'fivem-strict-rp'
-author 'UseAI Instant'
-description 'نظام سيرفر RP مشدد — كل الأنظمة (30 نظاماً) + تابلت الأدمن الشامل.'
-version '3.4.0'
+author 'AL-FORSAN RP'
+description '⚔️ الفرسان RP — نظام سيرفر RP مشدد (30 نظاماً) + الهوية الموحّدة.'
+version '3.6.0'
 
 shared_scripts {
     '@oxmysql/lib/MySQL.lua',
+    'config/branding.lua',
     'config/penalties.lua',
     'config/economy.lua',
     'config/needs.lua',
@@ -71,6 +72,7 @@ client_scripts {
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
+    'server/branding.lua',
     'server/penalties.lua',
     'server/economy.lua',
     'server/needs.lua',
